@@ -14,21 +14,30 @@
             result.raw = raw;
             return result;
         }
-        
-        constexpr SQType<Type, FractionalBits> operator+(const SQType& other) const{
+
+        constexpr bool operator==(const SQType& other) const { return raw == other.raw; }
+        constexpr bool operator!=(const SQType& other) const { return raw != other.raw; }
+        constexpr bool operator<(const SQType& other) const { return raw < other.raw; }
+        constexpr bool operator>(const SQType& other) const { return raw > other.raw; }
+        constexpr bool operator<=(const SQType& other) const { return raw <= other.raw; }
+        constexpr bool operator>=(const SQType& other) const { return raw >= other.raw; }
+        constexpr SQType operator-() const{return from_raw(-raw);}
+
+        constexpr SQType operator+(const SQType& other) const{
             return from_raw(raw + other.raw);
             }
-        constexpr SQType<Type, FractionalBits> operator-(const SQType& other) const{
-            return from_raw(raw - other.raw);
-        }
+        constexpr SQType& operator+=(const SQType& other){
+            raw += other.raw;
+            return *this;
+            }
 
-        constexpr SQType<Type, FractionalBits> operator/(const SQType& other) const{
+        constexpr SQType operator/(const SQType& other) const{
             using WideUType = uint64_t;
             using WideType = int64_t;
             
             bool negative_a = (raw < 0);
             bool negative_b = (other.raw < 0);
-            bool negative = (raw < 0) ^ (other.raw < 0);
+            bool negative = negative_a ^ negative_b;
 
             // absolute value
             WideUType u_raw = static_cast<WideUType>(negative_a ? -static_cast<WideType>(raw) : raw);
@@ -39,7 +48,23 @@
 
             return from_raw(final_raw);
         }
-        constexpr SQType<Type, FractionalBits> operator*(const SQType& other) const{
+
+        constexpr SQType operator%(const SQType& other) const{
+            using WideUType = uint64_t;
+            using WideType = int64_t;
+            bool negative_b = (other.raw < 0);
+            bool negative = (raw < 0);
+
+            // absolute value
+            WideUType u_raw = static_cast<WideUType>(negative ? -static_cast<WideType>(raw) : raw);
+            WideUType u_other = static_cast<WideUType>(negative_b ? -static_cast<WideType>(other.raw)  : other.raw);
+            Type result_raw = static_cast<Type>(u_raw % u_other);
+            // restore sign
+            Type final_raw = static_cast<Type>(negative ? -static_cast<Type>(result_raw) : result_raw);
+
+            return from_raw(final_raw);
+        }
+        constexpr SQType operator*(const SQType& other) const{
             using WideUType = uint64_t;
             using WideType = int64_t;
             

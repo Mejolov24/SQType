@@ -1,5 +1,5 @@
 #include <iostream>
-#include "SQType.h"
+#include <SQType.h>
 
 int main() {
   s16_q12_t q12_number = 1; // common declaration
