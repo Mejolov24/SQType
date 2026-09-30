@@ -26,8 +26,15 @@
         constexpr SQType operator+(const SQType& other) const{
             return from_raw(raw + other.raw);
             }
+        constexpr SQType operator-(const SQType& other) const{
+            return from_raw(raw + other.raw);
+            }
         constexpr SQType& operator+=(const SQType& other){
             raw += other.raw;
+            return *this;
+            }
+        constexpr SQType& operator-=(const SQType& other){
+            raw -= other.raw;
             return *this;
             }
 
